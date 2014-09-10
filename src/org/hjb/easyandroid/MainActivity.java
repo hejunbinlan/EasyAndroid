@@ -1,13 +1,21 @@
 package org.hjb.easyandroid;
 
+import org.hjb.easyandroid.ui.widget.EAScrollView;
+import org.hjb.easyandroid.ui.widget.EAScrollView.OnRefreshListener;
+
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -45,6 +53,8 @@ public class MainActivity extends Activity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
+		private EAScrollView scrollView;
+		private Button button;
 
 		public PlaceholderFragment() {
 		}
@@ -52,8 +62,40 @@ public class MainActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+			scrollView = (EAScrollView) rootView.findViewById(R.id.scrollView);
+			scrollView.setOnRefreshListener(new OnRefreshListener() {
+				@Override
+				public void onRefresh() {
+					new LoadDataTask().execute();
+				}
+			});
+			
+			button = (Button) rootView.findViewById(R.id.button);
+			button.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getActivity(), "clicked !", Toast.LENGTH_SHORT).show();
+				}
+			});
 			return rootView;
 		}
+
+		private class LoadDataTask extends AsyncTask<Void, Void, Void> {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				SystemClock.sleep(3000);
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				scrollView.onRefreshComplete();
+			}
+
+		}
+
 	}
 
 }
